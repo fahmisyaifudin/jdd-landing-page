@@ -31,13 +31,13 @@ interface FormData {
 const ticketTypes: TicketType[] = [
   {
     id: "presale",
-    name: "[Pre Sale] Jatim Developer Day 2025",
+    name: "[Testing] Jatim Developer Day 2025",
     price: 35000,
     originalPrice: 50000,
     startDate: "18 Agustus 2025",
     endDate: "31 Agustus 2025",
     disabled: false,
-    description: "Hemat Rp 15.000! Terbatas hingga 31 Agustus",
+    description: "For internal purpose testing only",
   },
   {
     id: "regular",
@@ -145,6 +145,7 @@ const TicketScreen = ({ content }: { content?: Content }) => {
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isLoading, setIsLoading] = useState(false);
 
   const selectedTicket = ticketTypes.find((t) => t.id === formData.ticketType);
 
@@ -189,27 +190,35 @@ const TicketScreen = ({ content }: { content?: Content }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
-      const payment = await createPayment({
-        product: [selectedTicket?.name || ""],
-        qty: ["1"],
-        price: [(selectedTicket?.price || 0).toString()],
-        amount: (selectedTicket?.price || 0).toString(),
-        buyerName: formData.holderName,
-        buyerEmail: formData.holderEmail,
-        notifyUrl: "https://jdd-ticketing-ctw4mjlu7a-et.a.run.app/api/callback",
-        paymentMethod: "qris",
-      });
-      window.open(payment.Url, "_blank");
-      setFormData({
-        ticketType: "",
-        holderName: "",
-        holderEmail: "",
-        community: "",
-        occupation: "",
-        institution: "",
-        interest: "",
-        agreeTerms: false,
-      });
+      setIsLoading(true);
+      try {
+        const payment = await createPayment({
+          product: [selectedTicket?.name || ""],
+          qty: ["1"],
+          price: [(selectedTicket?.price || 0).toString()],
+          amount: (selectedTicket?.price || 0).toString(),
+          buyerName: formData.holderName,
+          buyerEmail: formData.holderEmail,
+          notifyUrl:
+            "https://jdd-ticketing-ctw4mjlu7a-et.a.run.app/api/callback",
+          paymentMethod: "qris",
+        });
+        window.open(payment.Url, "_blank");
+        setFormData({
+          ticketType: "",
+          holderName: "",
+          holderEmail: "",
+          community: "",
+          occupation: "",
+          institution: "",
+          interest: "",
+          agreeTerms: false,
+        });
+      } catch (error) {
+        console.error("Payment creation failed:", error);
+      } finally {
+        setIsLoading(false);
+      }
     }
   };
 
@@ -489,9 +498,18 @@ const TicketScreen = ({ content }: { content?: Content }) => {
                       type="submit"
                       onClick={handleSubmit}
                       className="w-full text-lg py-4"
-                      disabled={!selectedTicket || !formData.agreeTerms}
+                      disabled={
+                        !selectedTicket || !formData.agreeTerms || isLoading
+                      }
                     >
-                      Beli Tiket - {formatCurrency(selectedTicket.price)}
+                      {isLoading ? (
+                        <div className="flex items-center justify-center space-x-2">
+                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                          <span>Memproses...</span>
+                        </div>
+                      ) : (
+                        `Beli Tiket - ${formatCurrency(selectedTicket.price)}`
+                      )}
                     </Button>
                   </div>
                 </div>
