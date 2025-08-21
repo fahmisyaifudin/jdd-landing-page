@@ -10,7 +10,6 @@ import Hero from "./sections/Hero";
 import Parallel from "./sections/Parallel";
 import Speaker from "./sections/Speaker";
 import Sponsor from "./sections/Sponsor";
-import Ticket from "./sections/Ticket";
 
 const LandingScreen = async ({ content }: { content?: Content }) => {
   const benefits = (await getBenefits()) as Benefits;
@@ -24,7 +23,6 @@ const LandingScreen = async ({ content }: { content?: Content }) => {
       <Agenda content={content} />
       <Benefit benefits={benefits} />
       <Gallery />
-      <Ticket />
       <Cta content={content} />
       <Sponsor />
     </>
