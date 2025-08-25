@@ -50,6 +50,14 @@ const Footer = async () => {
             Refund Policy
           </Link>
 
+          <div className="space-y-2">
+            <h3 className="font-semibold text-lg">Address</h3>
+            <p className="leading-relaxed text-gray-300">
+              Jl. Sidosermo II No.106f, Sidosermo, Kec. Wonocolo, Surabaya, Jawa
+              Timur
+            </p>
+          </div>
+
           <div className="flex gap-4">
             <Link target="_blank" href={socialMedia.instagram}>
               <Instagram />
