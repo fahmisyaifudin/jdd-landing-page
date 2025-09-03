@@ -35,7 +35,7 @@ const ticketTypes: TicketType[] = [
     price: 35000,
     originalPrice: 50000,
     startDate: "18 Agustus 2025",
-    endDate: "31 Agustus 2025",
+    endDate: "15 September 2025",
     disabled: false,
     description: "For internal purpose testing only",
   },
@@ -193,15 +193,13 @@ const TicketScreen = ({ content }: { content?: Content }) => {
       setIsLoading(true);
       try {
         const payment = await createPayment({
-          product: [selectedTicket?.name || ""],
-          qty: ["1"],
-          price: [(selectedTicket?.price || 0).toString()],
+          product: selectedTicket?.name || "",
+          qty: "1",
+          price: (selectedTicket?.price || 0).toString(),
           amount: (selectedTicket?.price || 0).toString(),
+          referenceId: `JDD2025-${Date.now()}`,
           buyerName: formData.holderName,
           buyerEmail: formData.holderEmail,
-          notifyUrl:
-            "https://jdd-ticketing-ctw4mjlu7a-et.a.run.app/api/callback",
-          paymentMethod: "qris",
         });
         window.open(payment.Url, "_blank");
         setFormData({
